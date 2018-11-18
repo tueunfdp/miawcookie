@@ -2,22 +2,21 @@ import Account from "@/account";
 import ScriptAction, { ScriptActionResults } from "@/scripts/actions/ScriptAction";
 
 
-export default class BuyAction extends ScriptAction {
-  public _name: string = "BuyAction";
-  public objectToBuyId: number;
+export default class SellAction extends ScriptAction {
+  public _name: string = "SellAction";
+  public objectToSellId: number;
   public quantity: number;
 
-  constructor(objectToBuyId: number, quantity: number) {
+  constructor(objectToSellId: number, quantity: number) {
     super();
-    this.objectToBuyId = objectToBuyId;
+    this.objectToSellId = objectToSellId;
     this.quantity = quantity;
   }
 
   public async process(account: Account): Promise<ScriptActionResults> {
-    if (account.game.npcs.buyItem(this.objectToBuyId, this.quantity)) {
+    if (account.game.npcs.sellItem(this.objectToSellId, this.quantity)) {
       return ScriptAction.processingResult();
     }
     return ScriptAction.doneResult();
-
   }
 }

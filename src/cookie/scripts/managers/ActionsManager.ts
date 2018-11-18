@@ -28,6 +28,8 @@ import LiteEvent from "@/utils/LiteEvent";
 import { sleep } from "@/utils/Time";
 import TimerWrapper from "@/utils/TimerWrapper";
 // import BuyAction from "../actions/npcs/BuyAction";
+import SellAction from "../actions/npcs/SellAction";
+import BuyAction from "../actions/npcs/BuyAction";
 
 export interface IActionsManagerEventData {
   account: Account;
@@ -77,9 +79,11 @@ export default class ActionsManager {
     this.account.game.storage.StorageStarted.on(this.storage_storageStarted);
     this.account.game.storage.StorageLeft.on(this.storage_storageLeft);
     this.account.game.npcs.DialogLeft.on(this.npcs_dialogLeft);
+    this.account.game.npcs.NpcShopUpdated.on(this.npcs_shopUpdated);
     this.account.game.exchange.ExchangeStarted.on(
       this.exchange_exchangeStarted
     );
+
     this.account.game.exchange.ExchangeLeft.on(this.exchange_exchangeLeft);
     this.account.game.bid.StartedBuying.on(this.bid_startedBuying);
     this.account.game.bid.StartedSelling.on(this.bid_startedSelling);
@@ -420,6 +424,18 @@ export default class ActionsManager {
     }
   };
 
+  private npcs_shopUpdated = async () => {
+    if (!this.account.scripts.running) {
+      return;
+    }
+    if (
+      this.currentAction instanceof SellAction ||
+      this.currentAction instanceof BuyAction
+    ) {
+      await this.dequeueActions(400);
+    }
+  }
+
   private npcs_questionReceived = async () => {
     if (!this.account.scripts.running) {
       return;
@@ -474,6 +490,7 @@ export default class ActionsManager {
     }
   };
 
+
   private exchange_exchangeStarted = async () => {
     if (!this.account.scripts.running) {
       return;
@@ -494,6 +511,7 @@ export default class ActionsManager {
       await this.dequeueActions(400);
     }
   };
+
 
   private bid_startedBuying = async () => {
     if (!this.account.scripts.running) {
