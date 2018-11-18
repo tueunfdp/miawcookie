@@ -31,7 +31,6 @@ import ExchangePutItemAction from "../actions/exchange/ExchangePutItemAction";
 import ExchangeRemoveItemAction from "../actions/exchange/ExchangeRemoveItemAction";
 import SellAction from "../actions/npcs/SellAction";
 import BuyAction from "../actions/npcs/BuyAction";
-import NewCraftAction from "../actions/craft/NewCraftAction";
 
 export interface IActionsManagerEventData {
   account: Account;
@@ -526,18 +525,6 @@ export default class ActionsManager {
       await this.dequeueActions(400);
     }
   };
-
-  private craft_craftStarted = async () => {
-    if (!this.account.scripts.running) {
-      return;
-    }
-    if (
-      this.currentAction instanceof NewCraftAction
-    ) {
-
-      await this.dequeueActions(400);
-    }
-  }
 
   private craft_craftLeft = async () => {
     if (!this.account.scripts.running) {
