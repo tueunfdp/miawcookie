@@ -3,12 +3,15 @@ import { AccountStates } from "@/account/AccountStates";
 import ObjectEntry from "@/game/character/inventory/ObjectEntry";
 import ExchangeCraftResultMessage from "@/protocol/network/messages/ExchangeCraftResultMessage";
 import ExchangeCraftResultWithObjectDescMessage from "@/protocol/network/messages/ExchangeCraftResultWithObjectDescMessage";
+import ExchangeIsReadyMessage from "@/protocol/network/messages/ExchangeIsReadyMessage";
+import ExchangeItemAutoCraftRemainingMessage from "@/protocol/network/messages/ExchangeItemAutoCraftRemainingMessage";
 import ExchangeObjectAddedMessage from "@/protocol/network/messages/ExchangeObjectAddedMessage";
 import ExchangeReplayCountModifiedMessage from "@/protocol/network/messages/ExchangeReplayCountModifiedMessage";
 import ExchangeStartOkCraftMessage from "@/protocol/network/messages/ExchangeStartOkCraftMessage";
 import ExchangeStartOkCraftWithInformationMessage from "@/protocol/network/messages/ExchangeStartOkCraftWithInformationMessage";
 import ObjectItemToSell from "@/protocol/network/types/ObjectItemToSell";
 import LiteEvent from "@/utils/LiteEvent";
+import { sleep } from "@/utils/Time";
 
 export default class Craft {
   public remoteObjects: ObjectEntry[];
@@ -18,11 +21,13 @@ export default class Craft {
   public currentWeight: number = 0;
   public nbCase: number = 0;
   public skillid: number = 0;
+  public count: number = 0;
 
   private account: Account;
   private readonly onCraftStarted = new LiteEvent<void>();
   private readonly onCraftLeft = new LiteEvent<void>();
   private readonly onCraftQuantityChanged = new LiteEvent<void>();
+  private readonly onCraftUpdated = new LiteEvent<void>();
 
   constructor(account: Account) {
     this.account = account;
@@ -43,14 +48,15 @@ export default class Craft {
     return this.onCraftQuantityChanged.expose();
   }
 
-  public setRecipe(gid: number): boolean {
+  public async setRecipe(gid: number): Promise<boolean> {
     this.account.network.sendMessageFree("ExchangeSetCraftRecipeMessage", {
       objectGID: gid
     });
+    await sleep(200);
     return true;
   }
 
-  public setQuantity(qty: number): boolean {
+  public async setQuantity(qty: number): Promise<boolean> {
     this.account.network.sendMessageFree("ExchangeReplayMessage", {
       count: qty
     });
@@ -97,13 +103,13 @@ export default class Craft {
   public async UpdateExchangeCraftResultMessage(
     message: ExchangeCraftResultMessage
   ) {
-    this.onCraftLeft.trigger();
+    this.onCraftUpdated.trigger();
   }
 
   public async UpdateExchangeCraftResultWithObjectDescMessage(
     message: ExchangeCraftResultWithObjectDescMessage
   ) {
-    this.onCraftLeft.trigger();
+    this.onCraftUpdated.trigger();
   }
 
   public async UpdateExchangeStartOkCraftMessage(
@@ -111,5 +117,16 @@ export default class Craft {
   ) {
     this.account.state = AccountStates.EXCHANGE;
     this.onCraftStarted.trigger();
+  }
+
+  public async UpdateExchangeItemAutoCraftRemainingMessage(
+    message: ExchangeItemAutoCraftRemainingMessage
+  ) {
+    this.count = message.count;
+    await sleep(500);
+  }
+
+  public async UpdateExchangeIsReadyMessage(message: ExchangeIsReadyMessage) {
+    this.onCraftLeft.trigger();
   }
 }

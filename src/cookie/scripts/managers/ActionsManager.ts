@@ -576,7 +576,10 @@ export default class ActionsManager {
     if (!this.account.scripts.running) {
       return;
     }
-    if (this.currentAction instanceof CraftAction) {
+    if (
+      this.currentAction instanceof CraftAction ||
+      this.currentAction instanceof LeaveDialogAction
+    ) {
       await this.dequeueActions(400);
     }
   };

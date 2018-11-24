@@ -108,6 +108,7 @@ export default class ExchangeFrame implements IFrame {
     message: ExchangeIsReadyMessage
   ) {
     account.game.exchange.UpdateExchangeIsReadyMessage(message);
+    account.game.craft.UpdateExchangeIsReadyMessage(message);
   }
 
   private async HandleExchangeLeaveMessage(
