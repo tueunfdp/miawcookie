@@ -115,6 +115,7 @@ export default class ExchangeFrame implements IFrame {
     message: ExchangeLeaveMessage
   ) {
     account.game.exchange.UpdateExchangeLeaveMessage(message);
+    account.game.npcs.UpdateExchangeLeaveMessage(message);
   }
 
   private async HandleExchangeShopStockStartedMessage(
