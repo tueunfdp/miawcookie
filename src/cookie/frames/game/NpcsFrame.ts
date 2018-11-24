@@ -60,6 +60,7 @@ export default class NpcsFrame implements IFrame {
     message: LeaveDialogMessage
   ) {
     account.game.npcs.UpdateLeaveDialogMessage(message);
+    account.game.storage.UpdateLeaveDialogMessage(message);
   }
 
   private async HandleExchangeStartOkNpcShopMessage(

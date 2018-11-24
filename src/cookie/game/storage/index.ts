@@ -13,7 +13,7 @@ import { List } from "linqts";
 export default class Storage {
   public objects: List<ObjectEntry>;
   public kamas: number = 0;
-  private readonly onStorageStarted = new LiteEvent<void>();
+  private readonly onDialogLeft = new LiteEvent<void>();
   private readonly onStorageUpdated = new LiteEvent<void>();
   private readonly onStorageLeft = new LiteEvent<void>();
   private account: Account;
@@ -24,16 +24,16 @@ export default class Storage {
     this.objects = new List<ObjectEntry>();
   }
 
-  public get StorageStarted() {
-    return this.onStorageStarted.expose();
-  }
-
   public get StorageUpdated() {
     return this.onStorageUpdated.expose();
   }
 
   public get StorageLeft() {
     return this.onStorageLeft.expose();
+  }
+
+  public get DialogLeft() {
+    return this.onDialogLeft.expose();
   }
 
   public get ServerSelected() {
@@ -53,8 +53,8 @@ export default class Storage {
       quantity === 0
         ? item.quantity
         : quantity > item.quantity
-          ? item.quantity
-          : quantity;
+        ? item.quantity
+        : quantity;
 
     this.account.network.sendMessageFree("ExchangeObjectMoveMessage", {
       objectUID: item.uid,
@@ -83,8 +83,8 @@ export default class Storage {
       quantity === 0
         ? item.quantity
         : quantity > item.quantity
-          ? item.quantity
-          : quantity;
+        ? item.quantity
+        : quantity;
 
     this.account.network.sendMessageFree("ExchangeObjectMoveMessage", {
       objectUID: item.uid,
@@ -107,8 +107,8 @@ export default class Storage {
       quantity === 0
         ? this.account.game.character.inventory.kamas
         : quantity > this.account.game.character.inventory.kamas
-          ? this.account.game.character.inventory.kamas
-          : quantity;
+        ? this.account.game.character.inventory.kamas
+        : quantity;
 
     // TODO: See if we really have to check the quantity here.
     if (quantity > 0) {
@@ -134,8 +134,8 @@ export default class Storage {
       quantity === 0
         ? this.kamas
         : quantity > this.kamas
-          ? this.kamas
-          : quantity;
+        ? this.kamas
+        : quantity;
 
     // TODO: See if we really have to check the quantity here.
     if (quantity > 0) {
@@ -232,8 +232,6 @@ export default class Storage {
       const oe = oeRes && oeRes.object;
       this.objects.Add(await ObjectEntry.setup(obj, oe));
     }
-
-    this.onStorageStarted.trigger();
   }
 
   public async UpdateStorageKamasUpdateMessage(message: any) {
@@ -307,5 +305,9 @@ export default class Storage {
       this.kamas = 0;
       this.onStorageLeft.trigger();
     }
+  }
+
+  public async UpdateLeaveDialogMessage(message: any) {
+    this.onDialogLeft.trigger();
   }
 }
