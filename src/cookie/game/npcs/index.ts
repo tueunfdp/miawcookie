@@ -163,4 +163,9 @@ export default class Npcs {
     this.account.state = AccountStates.TALKING;
     this.onNpcShopUpdated.trigger();
   }
+
+  public async UpdateExchangeLeaveMessage(message: any) {
+    this.account.state = AccountStates.NONE;
+    this.onDialogLeft.trigger();
+  }
 }

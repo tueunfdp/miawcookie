@@ -32,6 +32,8 @@ import ScriptAction, {
 import LiteEvent from "@/utils/LiteEvent";
 import { sleep } from "@/utils/Time";
 import TimerWrapper from "@/utils/TimerWrapper";
+import StorageGetAllItemsAction from "../actions/storage/StorageGetAllItemsAction";
+import StoragePutAllItemsAction from "../actions/storage/StoragePutAllItemsAction";
 
 export interface IActionsManagerEventData {
   account: Account;
@@ -80,6 +82,7 @@ export default class ActionsManager {
     this.account.game.npcs.QuestionReceived.on(this.npcs_questionReceived);
     this.account.game.storage.StorageStarted.on(this.storage_storageStarted);
     this.account.game.storage.StorageLeft.on(this.storage_storageLeft);
+    this.account.game.storage.StorageUpdated.on(this.storage_storageUpdated);
     this.account.game.npcs.DialogLeft.on(this.npcs_dialogLeft);
     this.account.game.exchange.ExchangeStarted.on(
       this.exchange_exchangeStarted
@@ -457,6 +460,18 @@ export default class ActionsManager {
       this.currentAction instanceof UseLockedStorageAction
     ) {
       await this.dequeueActions(200);
+    }
+  };
+
+  private storage_storageUpdated = async () => {
+    if (!this.account.scripts.running) {
+      return;
+    }
+    if (
+      this.currentAction instanceof StoragePutAllItemsAction ||
+      this.currentAction instanceof StorageGetAllItemsAction
+    ) {
+      await this.dequeueActions(400);
     }
   };
 
