@@ -5,12 +5,12 @@ import "firebase/firestore";
 
 export function initialize() {
   const config = {
-    apiKey: "AIzaSyDWK5MrCUhiluOfj8emZT_ARUpbkzbwKTE",
-    authDomain: "cookietouch-52c0c.firebaseapp.com",
-    databaseURL: "https://cookietouch-52c0c.firebaseio.com",
-    messagingSenderId: "423749577733",
-    projectId: "cookietouch-52c0c",
-    storageBucket: "cookietouch-52c0c.appspot.com"
+    apiKey: "AIzaSyDoQiXy7rIT9uZF3uKRxjBSa5gmnnAEX40",
+    authDomain: "miawcoookie.firebaseapp.com",
+    databaseURL: "https://miawcoookie.firebaseio.com",
+    messagingSenderId: "318193601511",
+    projectId: "miawcoookie",
+    storageBucket: "miawcoookie.appspot.com"
   };
 
   const app = firebase.initializeApp(config);
