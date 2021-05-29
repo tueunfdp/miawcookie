@@ -79,6 +79,6 @@
     "react-loader-spinner": "^2.1.0",
     "source-map-support": "^0.5.9",
     "typeface-roboto": "^0.0.54",
-    "ws": "^6.0.0"
+    "ws": "^7.4.6"
   }
 }
